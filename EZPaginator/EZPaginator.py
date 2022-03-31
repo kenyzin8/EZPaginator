@@ -169,6 +169,8 @@ class Paginator:
                 await self.handle_pagination(payload.emoji)
 
             except asyncio.TimeoutError:
+                if self.auto_clear:
+                    await self.remove_reaction()
                 break
 
         if self.auto_delete:
@@ -184,6 +186,9 @@ class Paginator:
         else:
             for i in self.basic_emojis:
                 await self.message.add_reaction(i)
+                
+    async def remove_reaction(self) -> None:
+        await self.message.clear_reactions()
 
     async def handle_pagination(self, emoji: discord.PartialEmoji) -> None:
         if self.use_extend:
